@@ -39,7 +39,7 @@ def generate_sentence_with_ollama(predicted_words: list):
     Ensures the sentence only contains the given words.
     """
     words_str = ", ".join(predicted_words)
-    prompt = f"Create a meaningful sentence using only these words: {words_str}. Do not add new words."
+    prompt = f"Create a meaningful sentence using only these words: {words_str}. Do not add new words and do not add any explaination."
 
     try:
         response = ollama.chat(model="llama3", messages=[{"role": "user", "content": prompt}])
