@@ -9,7 +9,7 @@ from tensorflow.keras.layers import LSTM, Dense
 from helper_functions import convert_video_to_pose_embedded_np_array
 
 app = FastAPI()
-actions = np.array(["Hello", "How are you", "Thank you"])
+actions = np.array(["Hello", "How are you", "Thank you"])  # Example action phrases
 
 
 def initialize_model():
@@ -39,7 +39,7 @@ def generate_sentence_with_ollama(predicted_words: list):
     Ensures the sentence only contains the given words.
     """
     words_str = ", ".join(predicted_words)
-    prompt = f"Create a meaningful sentence using only these words: {words_str}. Do not add new words and do not add any explaination."
+    prompt = f"Create a meaningful sentence using only these words, also use correct punctuation, comma, question mark, full stop, exclamation mark : {words_str}. Do not add new words and do not add any explanation."
 
     try:
         response = ollama.chat(model="llama3", messages=[{"role": "user", "content": prompt}])
@@ -87,7 +87,8 @@ async def upload_videos(files: list[UploadFile] = File(...)):
             prediction = model.predict(np.expand_dims(out_np_array, axis=0))
             predicted_action = actions[np.argmax(prediction, axis=1)[0]]
 
-            predicted_words.append(predicted_action)
+            # Split multi-word predictions into separate words
+            predicted_words.extend(predicted_action.split())
 
         except Exception as e:
             return {"error": str(e)}
